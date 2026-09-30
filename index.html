@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My OT BD</title>
+<style>
+:root{--bg:#f4f6f5;--card:#fff;--ink:#1b2a22;--mut:#6b7a72;--line:#d8e0dc;--g:#1b7a4a;--g2:#25a462;--y:#e9a416;--pk:#f7faf8;--red:#e5484d;--tint:#e8f5ee}
+[data-theme=dark]{--bg:#0f1a15;--card:#19261f;--ink:#e8f0ec;--mut:#9ab0a5;--line:#2c3f35;--pk:#15211b;--tint:#1d3328}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Bengali","Kalpurush",Arial,sans-serif;padding-bottom:84px}
+.hide{display:none!important}
+button{font:inherit;cursor:pointer;color:inherit}
+header{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;padding:14px 14px 18px;border-radius:0 0 26px 26px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 10px #0003}
+.logo{width:42px;height:42px;border-radius:12px;background:#fff;color:var(--g);font-weight:800;display:grid;place-items:center}
+.ttl{flex:1;line-height:1.25}.ttl small{display:block;color:#ffe08a}
+header button{background:none;border:0;color:#fff;font-size:1.4rem}
+.wrap{max-width:520px;margin:0 auto;padding:12px}
+.pbar{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 12px;display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.pbar select{flex:1;border:0;background:transparent;font-weight:700}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+h3{margin:0 0 10px;font-size:1.1rem}
+label{display:block;font-size:.82rem;color:var(--mut);margin:10px 0 3px}
+input:not([type=checkbox]),select{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:12px;background:var(--pk);color:var(--ink);font:inherit}
+input[type=checkbox]{width:44px;height:24px;accent-color:var(--g);transform:scale(1.3)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{background:var(--g);color:#fff;border:0;border-radius:14px;padding:13px 20px;font-weight:700}
+.btn.full{width:100%;margin-top:12px}.btn.ghost{background:transparent;color:var(--g);border:2px solid var(--g)}
+.hero{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border-radius:22px;padding:16px;display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.hero h2{margin:0}.hero .sal{color:#ffe08a;font-weight:700}
+.av{width:64px;height:64px;border-radius:50%;background:#fff3;display:grid;place-items:center;font-size:2rem}
+.badge{background:var(--y);color:#000;border-radius:14px;padding:2px 10px;font-size:.8rem;font-weight:700;margin-left:auto}
+.calcbox{background:var(--tint);border:1.5px solid var(--g2);border-radius:14px;padding:12px;margin-top:10px}
+.calcbox small,small{color:var(--mut);display:block}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
+.chip{flex:none;padding:10px 18px;border:1.5px solid var(--line);border-radius:16px;background:var(--card)}
+.chip.on{background:var(--g);color:#fff;border-color:var(--g);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;font-size:.8rem;color:var(--mut)}
+.stats b{display:block;font-size:1.05rem;color:var(--g)}.stats .y b{color:var(--y)}.stats .r b{color:var(--red)}
+.ent{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.tag{display:inline-block;margin-top:4px;background:var(--tint);border:1px solid var(--g2);color:var(--g);border-radius:8px;padding:1px 8px;font-size:.85rem}
+.tag.r{background:#fde8e8;border-color:var(--red);color:var(--red)}
+.ent button{background:none;border:0;font-size:1.2rem;padding:6px}
+.tg{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.qb{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.qb button{background:var(--tint);border:1.5px solid var(--g2);border-radius:12px;padding:10px 16px;color:var(--g);font-weight:700}
+.qb .clr{background:#fde8e8;border-color:var(--red);color:var(--red)}
+.ok{background:var(--tint);border:1.5px solid var(--g2);border-radius:16px;padding:12px;margin-bottom:12px;color:var(--g)}
+.tot{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;border-radius:22px;padding:16px;margin-bottom:12px}
+.tot .big{color:#ffd166;font-size:2.2rem;font-weight:800}
+.row{display:flex;justify-content:space-between;padding:8px 0;gap:10px}
+.row span:last-child{font-weight:700;color:var(--g);text-align:right}
+.row.neg span:last-child{color:var(--red)}
+.row.gt{border-top:2px solid var(--line);margin-top:6px;padding-top:12px;font-size:1.1rem;font-weight:700}
+.sh{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.sh button{border:1.5px solid var(--g2);background:var(--tint);border-radius:14px;padding:14px 4px;font-weight:700;color:var(--g)}
+.login{text-align:center;padding:22vh 20px 0}
+.gbtn{display:inline-flex;gap:10px;align-items:center;background:var(--card);border:1.5px solid var(--mut);border-radius:28px;padding:12px 24px;font-weight:700;margin-top:18px}
+.gbtn b{color:#4285f4;font-size:1.3rem}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;background:none;border:0;padding:8px 0;color:var(--mut);font-size:.78rem}
+nav button i{display:block;font-style:normal;font-size:1.4rem}
+nav button.on{color:var(--g);font-weight:700}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 18px;border-radius:20px;z-index:9}
+@media print{header,nav,.pbar,.noprint,.chips{display:none!important}.pg{display:none}#pg_rep{display:block}}
+</style>
+</head>
+<body>
+<div id="loginView" class="login hide">
+  <h1>My OT BD</h1>
+  <div>মাসিক বেতন ও ওভারটাইম ট্র্যাকার<br>প্রথমবার Google দিয়ে ঢুকলেই অ্যাকাউন্ট খুলে যাবে।</div>
+  <button class="gbtn" id="loginBtn"><b>G</b> Google দিয়ে লগইন</button>
+  <div id="err" style="color:var(--red);margin-top:10px"></div>
+</div>
+
+<div id="app" class="hide">
+<header><div class="logo">OT</div><div class="ttl"><b style="font-size:1.3rem">My OT BD</b><small>মাসিক বেতন ও ওভারটাইম ট্র্যাকার</small></div><button id="themeBtn" aria-label="Theme">🌙</button><button id="logoutBtn" aria-label="লগআউট">⎋</button></header>
+<div class="wrap">
+<div class="pbar">🪪 <span style="color:var(--mut)">প্রোফাইল:</span><select id="pSel"></select></div>
+
+<section id="pg_prof" class="pg on">
+  <div class="hero"><div class="av">👤</div><div><h2 id="hName"></h2><div class="sal" id="hSal"></div></div><span class="badge">সক্রিয়</span></div>
+  <div class="card"><h3>প্রোফাইল বিবরণ ও রেট</h3>
+    <label>কর্মীর নাম</label><input id="f_name">
+    <label>মেইন স্যালারি (গ্রস)</label><input id="f_gross" type="number" inputmode="decimal" min="0">
+    <label>হিসাবের নিয়ম</label><select id="f_mode"><option value="law">BLL (গ্রস − ২৪৫০)</option><option value="epz">EPZ (গ্রস − ২৩৭৫)</option></select>
+    <div class="calcbox"><b>হিসাবকৃত মূল বেতন: <span id="fBasic"></span></b><small id="fForm"></small></div>
+    <div class="two">
+      <div><label>ওটি রেট (ঐচ্ছিক)</label><input id="f_rate" type="number" inputmode="decimal" min="0"><small id="fSug"></small></div>
+      <div><label>নাইট বিল (৳)</label><input id="f_night" type="number" inputmode="decimal" placeholder="100"></div>
+      <div><label>টিফিন বিল (৳)</label><input id="f_tiffin" type="number" inputmode="decimal" placeholder="50"></div>
+      <div><label>হাজিরা বোনাস (৳)</label><input id="f_bonus" type="number" inputmode="decimal" placeholder="500"></div>
+    </div>
+    <button class="btn full" id="saveProf">✔ প্রোফাইল সংরক্ষণ করুন</button>
+  </div>
+  <button class="btn ghost full" id="newProf">+ নতুন প্রোফাইল তৈরি</button>
+</section>
+
+<section id="pg_list" class="pg">
+  <div class="chips" id="chipsL"></div>
+  <div class="card stats" id="lStats"></div>
+  <div id="lList"></div>
+</section>
+
+<section id="pg_add" class="pg">
+  <div class="ok hide" id="okBanner"><b>আজকের রেকর্ড সম্পন্ন</b><br>আজকের হাজিরা ও ওভারটাইম লগ করা আছে।</div>
+  <div class="card"><h3>ডেইলি ওটি এন্ট্রি <span class="badge hide" id="editB">EDITING</span></h3>
+    <label>তারিখ</label><input type="date" id="a_date">
+    <div class="tg"><div><b>অনুপস্থিত চিহ্নিত করুন</b><small>বন্ধ থাকলে উপস্থিত</small></div><input type="checkbox" id="a_abs"></div>
+    <label>ওভারটাইম ঘণ্টা</label><input id="a_h" type="number" step="0.5" min="0" inputmode="decimal" value="0">
+    <div class="qb"><button data-q="1">+1 hr</button><button data-q="2">+2 hrs</button><button data-q="3">+3 hrs</button><button data-q="4">+4 hrs</button><button class="clr" data-q="0">Clear</button></div>
+    <div class="tg"><div><b>নাইট বিল (<span id="nbA"></span>)</b><small>রাতের শিফটে কাজ</small></div><input type="checkbox" id="a_n"></div>
+    <div class="tg"><div><b>টিফিন বিল (<span id="tbA"></span>)</b><small>দৈনিক টিফিন বিল প্রযোজ্য</small></div><input type="checkbox" id="a_t"></div>
+    <div class="calcbox"><b>আনুমানিক দৈনিক আয়: <span id="aEst"></span></b><small>OT ঘণ্টা × রেট + বিল</small></div>
+    <button class="btn full" id="saveDay">💾 এন্ট্রি সংরক্ষণ করুন</button>
+  </div>
+  <button class="btn ghost full" data-go="list">ওটি ও হাজিরা তালিকা</button>
+</section>
+
+<section id="pg_rep" class="pg">
+  <div class="chips" id="chipsR"></div>
+  <div class="tot"><div style="display:flex;justify-content:space-between"><b id="rName"></b><span id="rMon"></span></div><hr style="border-color:#fff4"><div>সর্বমোট প্রদেয় টাকা</div><div class="big" id="rTot"></div></div>
+  <div class="card"><h3>বিস্তারিত পে-স্লিপ</h3>
+    <div class="tg noprint"><div><b>হাজিরা বোনাস যোগ করুন</b><small id="bonusS"></small></div><input type="checkbox" id="t_bonus"></div>
+    <div class="tg noprint"><div><b>নাইট বিল যোগ করুন</b><small id="nightS"></small></div><input type="checkbox" id="t_night"></div>
+    <div id="rRows"></div>
+  </div>
+  <h3 class="noprint">📤 পে-স্লিপ শেয়ার</h3>
+  <div class="sh noprint"><button id="shPdf">📄 PDF সেভ</button><button id="shWa">💬 WhatsApp</button><button id="shCopy">📋 কপি</button></div>
+  <h3 class="noprint" style="margin-top:18px">📊 গত ১২ মাসের সারাংশ</h3>
+  <div id="rHist" class="noprint"></div>
+</section>
+
+<section id="pg_calc" class="pg">
+  <div class="card"><h3>দ্রুত ক্যালকুলেটর</h3>
+    <label>মূল বেতন (গ্রস ৳)</label><input id="c_g" type="number" inputmode="decimal">
+    <label>ওভারটাইম ঘণ্টা</label><input id="c_h" type="number" inputmode="decimal">
+    <div class="two"><div><label>নাইট বিল (মোট ৳)</label><input id="c_n" type="number" inputmode="decimal"></div><div><label>টিফিন বিল (মোট ৳)</label><input id="c_t" type="number" inputmode="decimal"></div></div>
+    <label>হাজিরা বোনাস (৳)</label><input id="c_b" type="number" inputmode="decimal">
+    <div class="two"><button class="btn full" id="calcBtn">হিসাব করুন</button><button class="btn full ghost" id="calcClr">মুছুন</button></div>
+  </div>
+  <div class="card hide" id="cRes"></div>
+</section>
+</div>
+
+<nav>
+<button data-p="prof" class="on"><i>👤</i>প্রোফাইল</button>
+<button data-p="list"><i>📋</i>তালিকা</button>
+<button data-p="add"><i>➕</i>ওটি যোগ</button>
+<button data-p="rep"><i>📊</i>রিপোর্ট</button>
+<button data-p="calc"><i>🧮</i>ক্যালকুলেটর</button>
+</nav>
+</div>
+<div id="toast" class="hide"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,setDoc,addDoc,deleteDoc,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyBQLCC5n_To0JkMIgk5NGS7ipkK3idb2vs",
+  authDomain:"hajeraot.firebaseapp.com",
+  projectId:"hajeraot",
+  storageBucket:"hajeraot.firebasestorage.app",
+  messagingSenderId:"991169929289",
+  appId:"1:991169929289:web:a2c3cb03eacdb922229f98"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+
+const $=id=>document.getElementById(id);
+const FIXED={law:2450,epz:2375};
+const fm=x=>"৳"+(Math.round(x*100)/100).toLocaleString("en-US",{maximumFractionDigits:2});
+const pad=n=>String(n).padStart(2,"0");
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const wd=d=>new Date(d+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+const mlabel=m=>new Date(m+"-01T00:00:00").toLocaleDateString("en-US",{month:"short",year:"numeric"});
+const months=()=>{const a=[],d=new Date();d.setDate(1);for(let i=0;i<12;i++){a.push(d.getFullYear()+"-"+pad(d.getMonth()+1));d.setMonth(d.getMonth()-1)}return a};
+function toast(t){const e=$("toast");e.textContent=t;e.classList.remove("hide");setTimeout(()=>e.classList.add("hide"),1800)}
+
+let user=null,profiles=[],pid=null,loadedPid=null,days=[],month=today().slice(0,7),unP=null,unD=null,creating=false;
+const P=()=>profiles.find(p=>p.id===pid)||null;
+const num=(v,d)=>v===undefined||v===null||v===""?d:+v;
+
+function calcP(p){
+  const g=+p.gross||0,basic=g>0?(g-FIXED[p.mode||"law"])/1.5:0,sug=basic/208*2;
+  return{g,basic,sug,rate:+p.otRate>0?+p.otRate:sug};
+}
+function stats(m,full){
+  const p=P();if(!p)return null;
+  const c=calcP(p),D=days.filter(d=>d.date.startsWith(m)),W=D.filter(d=>!d.absent);
+  const hrs=W.reduce((s,d)=>s+(+d.ot||0),0);
+  const nA=num(p.night,100),tA=num(p.tiffin,50),bA=num(p.bonus,500);
+  const r={c,D,present:W.length,absent:D.length-W.length,hrs,otPay:hrs*c.rate,
+    tiffin:W.filter(d=>d.tiffin).length*tA,night:W.filter(d=>d.night).length*nA,bonus:bA,nA,tA,bA};
+  r.ded=r.absent*c.basic/30;
+  r.inc=full?{n:true,b:true}:{n:$("t_night").checked,b:$("t_bonus").checked};
+  r.total=c.g+r.otPay+r.tiffin+(r.inc.n?r.night:0)+(r.inc.b?r.bonus:0)-r.ded;
+  return r;
+}
+
+/* ---------- নেভিগেশন ও থিম ---------- */
+function show(n){
+  document.querySelectorAll(".pg").forEach(p=>p.classList.toggle("on",p.id==="pg_"+n));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.p===n));
+  if(n==="add")loadDay(); if(n==="calc")prefillCalc(); window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.p));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+function setTheme(t){document.documentElement.dataset.theme=t;$("themeBtn").textContent=t==="dark"?"☀️":"🌙";lsS("theme",t)}
+$("themeBtn").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");
+setTheme(lsG("theme")||"light");
+
+/* ---------- লগইন ---------- */
+$("loginBtn").onclick=async()=>{
+  const pr=new GoogleAuthProvider();
+  try{await signInWithPopup(auth,pr)}
+  catch(e){ if(e.code==="auth/popup-blocked"||e.code==="auth/operation-not-supported-in-this-environment")signInWithRedirect(auth,pr); else $("err").textContent="লগইন হয়নি: "+e.code }
+};
+$("logoutBtn").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,u=>{
+  unP&&unP();unD&&unD();unP=unD=null;user=u;profiles=[];days=[];pid=null;loadedPid=null;
+  $("loginView").classList.toggle("hide",!!u);$("app").classList.toggle("hide",!u);
+  if(!u)return;
+  const col=collection(db,"users",u.uid,"profiles");
+  unP=onSnapshot(col,async s=>{
+    profiles=s.docs.map(d=>({id:d.id,...d.data()}));
+    if(!profiles.length){
+      if(!creating){creating=true;const r=await addDoc(col,{name:u.displayName||"আমার প্রোফাইল",gross:0,mode:"law"});pid=r.id;lsS("pid",pid)}
+      return;
+    }
+    creating=false;
+    const saved=lsG("pid");
+    if(!profiles.find(p=>p.id===pid))pid=profiles.find(p=>p.id===saved)?saved:profiles[0].id;
+    fillSel();
+    if(pid!==loadedPid){loadedPid=pid;fillForm();subDays()}
+    renderAll();
+  });
+});
+function subDays(){
+  unD&&unD();unD=null;days=[];
+  if(!pid){renderAll();return}
+  unD=onSnapshot(collection(db,"users",user.uid,"profiles",pid,"days"),s=>{days=s.docs.map(d=>d.data());renderAll()});
+}
+
+/* ---------- প্রোফাইল ---------- */
+function fillSel(){
+  $("pSel").innerHTML=profiles.map(p=>`<option value="${p.id}">${(p.name||"প্রোফাইল").replace(/[<>&"]/g,"")}</option>`).join("");
+  $("pSel").value=pid;
+}
+$("pSel").onchange=()=>{pid=$("pSel").value;lsS("pid",pid);loadedPid=pid;fillForm();subDays();renderAll()};
+function fillForm(){
+  const p=P();if(!p)return;
+  $("f_name").value=p.name||"";$("f_gross").value=p.gross||"";$("f_mode").value=p.mode||"law";
+  $("f_rate").value=p.otRate||"";
+  $("f_night").value=p.night??"";$("f_tiffin").value=p.tiffin??"";$("f_bonus").value=p.bonus??"";
+  preview();
+}
+function preview(){
+  const c=calcP({gross:$("f_gross").value,mode:$("f_mode").value});
+  $("fBasic").textContent=fm(c.basic);
+  $("fForm").textContent=`Formula: (Main Salary − ${FIXED[$("f_mode").value].toLocaleString()}) × 2/3. Absent deduction is calculated from Basic ÷ 30.`;
+  $("fSug").textContent="প্রস্তাবিত ওটি রেট: "+fm(c.sug);
+}
+["f_gross","f_mode"].forEach(i=>$(i).oninput=preview);
+const rd=(id,d)=>$(id).value===""?d:+$(id).value;
+$("saveProf").onclick=async()=>{
+  if(!pid)return;
+  await setDoc(doc(db,"users",user.uid,"profiles",pid),{
+    name:$("f_name").value.trim()||"প্রোফাইল",gross:rd("f_gross",0),mode:$("f_mode").value,
+    otRate:rd("f_rate",0),night:rd("f_night",100),tiffin:rd("f_tiffin",50),bonus:rd("f_bonus",500)
+  },{merge:true});
+  toast("প্রোফাইল সংরক্ষিত ✓");
+};
+$("newProf").onclick=async()=>{
+  const r=await addDoc(collection(db,"users",user.uid,"profiles"),{name:"নতুন প্রোফাইল",gross:0,mode:"law"});
+  pid=r.id;lsS("pid",pid);loadedPid=pid;days=[];fillSel();fillForm();subDays();show("prof");
+};
+
+/* ---------- ওটি যোগ ---------- */
+function loadDay(){
+  const dt=$("a_date").value||(($("a_date").value=today()),today());
+  const d=days.find(x=>x.date===dt);
+  $("a_abs").checked=!!(d&&d.absent);$("a_h").value=d?d.ot||0:0;
+  $("a_n").checked=!!(d&&d.night);$("a_t").checked=!!(d&&d.tiffin);
+  $("editB").classList.toggle("hide",!d);
+  est();
+}
+function est(){
+  const p=P();if(!p)return;
+  const c=calcP(p),ab=$("a_abs").checked;
+  $("nbA").textContent=fm(num(p.night,100));$("tbA").textContent=fm(num(p.tiffin,50));
+  $("aEst").textContent=fm(ab?0:(+$("a_h").value||0)*c.rate+($("a_n").checked?num(p.night,100):0)+($("a_t").checked?num(p.tiffin,50):0));
+}
+["a_abs","a_h","a_n","a_t"].forEach(i=>$(i).oninput=est);
+$("a_date").onchange=loadDay;
+document.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{
+  const q=+b.dataset.q;$("a_h").value=q===0?0:(+$("a_h").value||0)+q;est();
+});
+$("saveDay").onclick=async()=>{
+  const date=$("a_date").value;if(!date||!pid)return;
+  const ab=$("a_abs").checked;
+  await setDoc(doc(db,"users",user.uid,"profiles",pid,"days",date),{
+    date,absent:ab,ot:ab?0:(+$("a_h").value||0),night:ab?false:$("a_n").checked,tiffin:ab?false:$("a_t").checked
+  });
+  toast("এন্ট্রি সংরক্ষিত ✓");
+};
+
+/* ---------- তালিকা ---------- */
+function chips(id){
+  $(id).innerHTML=months().map(m=>`<button class="chip ${m===month?"on":""}" data-m="${m}">${m===month?"✓ ":""}${mlabel(m)}</button>`).join("");
+}
+["chipsL","chipsR"].forEach(id=>$(id).onclick=e=>{const m=e.target.dataset.m;if(m){month=m;renderAll()}});
+$("lList").onclick=async e=>{
+  const ed=e.target.dataset.e,dx=e.target.dataset.x;
+  if(ed){$("a_date").value=ed;show("add")}
+  if(dx&&confirm("এই এন্ট্রি মুছে ফেলবেন?"))await deleteDoc(doc(db,"users",user.uid,"profiles",pid,"days",dx));
+};
+function renderList(s){
+  chips("chipsL");
+  $("lStats").innerHTML=`<div><b>${s.hrs}h</b>ওটি</div><div class="y"><b>${fm(s.otPay)}</b>ওটি আয়</div><div><b>${s.present}d</b>উপস্থিত</div><div class="r"><b>${s.absent}d</b>অনুপস্থিত</div>`;
+  const L=[...s.D].sort((a,b)=>a.date<b.date?1:-1);
+  $("lList").innerHTML=L.length?L.map(d=>`<div class="ent"><div><b>${wd(d.date)}</b><br><span class="tag ${d.absent?"r":""}">${d.absent?"অনুপস্থিত":(d.ot||0)+"h OT ("+fm((d.ot||0)*s.c.rate)+")"}</span></div><div><button data-e="${d.date}">✎</button><button data-x="${d.date}">✕</button></div></div>`).join(""):`<div class="card" style="text-align:center;color:var(--mut)">এই মাসে কোনো এন্ট্রি নেই।</div>`;
+}
+
+/* ---------- রিপোর্ট ---------- */
+function slipText(s,p){
+  return `*${p.name} — ${mlabel(month)}*\nMain Salary: ${fm(s.c.g)}\nBasic: ${fm(s.c.basic)}\nOvertime (${s.hrs}h): ${fm(s.otPay)}\nTiffin: ${fm(s.tiffin)}\n`+(s.inc.n?`Night Bill: ${fm(s.night)}\n`:"")+(s.inc.b?`Attendance Bonus: ${fm(s.bonus)}\n`:"")+`Absent Deduction (${s.absent}d): -${fm(s.ded)}\n*Grand Total: ${fm(s.total)}*`;
+}
+function renderRep(s,p){
+  chips("chipsR");
+  $("rName").textContent=p.name;$("rMon").textContent=new Date(month+"-01T00:00:00").toLocaleDateString("en-US",{month:"long",year:"numeric"});
+  $("rTot").textContent=fm(s.total);
+  $("bonusS").textContent=s.inc.b?`Bonus included (${fm(s.bonus)})`:`Bonus excluded (৳0)`;
+  $("nightS").textContent=s.inc.n?`Night bill included (${fm(s.night)})`:`Night bill excluded (৳0)`;
+  const R=(a,b,c)=>`<div class="row ${c||""}"><span>${a}</span><span>${b}</span></div>`;
+  $("rRows").innerHTML=R("Main Salary (Gross)",fm(s.c.g))+R("Basic Salary",fm(s.c.basic))+R(`Overtime (${s.hrs} hours)`,fm(s.otPay))
+   +R("Tiffin Bill",fm(s.tiffin))+(s.inc.n?R("Night Bill",fm(s.night)):"")+(s.inc.b?R("Attendance Bonus",fm(s.bonus)):"")
+   +R(`Absent Deduction (${s.absent} days)`,"− "+fm(s.ded),"neg")
+   +`<small>${s.absent} days × (${fm(s.c.basic)} / 30)</small>`
+   +`<div class="row gt"><span>Grand Total Payable</span><span style="font-size:1.3rem">${fm(s.total)}</span></div>`;
+  const H=months().filter(m=>days.some(d=>d.date.startsWith(m)));
+  $("rHist").innerHTML=H.length?H.map(m=>{const x=stats(m,true);return `<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><b>${mlabel(m)}</b><small>OT: ${x.hrs} hrs · Bills: ${fm(x.tiffin+x.night)}</small></div><b style="color:var(--g);font-size:1.15rem">${fm(x.total)}</b></div>`}).join(""):`<div class="card" style="color:var(--mut)">এখনো কোনো ডেটা নেই।</div>`;
+}
+["t_bonus","t_night"].forEach(i=>$(i).onchange=()=>renderAll());
+$("shPdf").onclick=()=>window.print();
+$("shWa").onclick=()=>{const s=stats(month,false),p=P();window.open("https://wa.me/?text="+encodeURIComponent(slipText(s,p)),"_blank")};
+$("shCopy").onclick=async()=>{const s=stats(month,false),p=P();try{await navigator.clipboard.writeText(slipText(s,p));toast("কপি হয়েছে ✓")}catch(e){toast("কপি করা যায়নি")}};
+
+/* ---------- ক্যালকুলেটর ---------- */
+function prefillCalc(){
+  const p=P();if(!p)return;
+  if(!$("c_g").value)$("c_g").value=p.gross||"";
+  if(!$("c_b").value)$("c_b").value=num(p.bonus,500);
+}
+$("calcBtn").onclick=()=>{
+  const g=+$("c_g").value||0,h=+$("c_h").value||0,n=+$("c_n").value||0,t=+$("c_t").value||0,b=+$("c_b").value||0;
+  const p=P()||{},c=calcP({gross:g,mode:p.mode||"law"}),ot=h*c.sug;
+  const R=(a,v,x)=>`<div class="row ${x||""}"><span>${a}</span><span>${v}</span></div>`;
+  $("cRes").innerHTML=R("মূল বেতন (Basic)",fm(c.basic))+R("ওটি রেট",fm(c.sug))+R(`ওভারটাইম (${h}h)`,fm(ot))+R("নাইট + টিফিন বিল",fm(n+t))+R("হাজিরা বোনাস",fm(b))
+    +`<div class="row gt"><span>সর্বমোট প্রাপ্য</span><span style="font-size:1.3rem">${fm(g+ot+n+t+b)}</span></div>`;
+  $("cRes").classList.remove("hide");
+};
+$("calcClr").onclick=()=>{["c_g","c_h","c_n","c_t","c_b"].forEach(i=>$(i).value="");$("cRes").classList.add("hide")};
+
+/* ---------- মূল রেন্ডার ---------- */
+function renderAll(){
+  const p=P();if(!p||!user)return;
+  $("hName").textContent=p.name||"";
+  const c=calcP(p);
+  $("hSal").textContent=`Main: ${fm(c.g)}   Basic: ${fm(c.basic)}`;
+  const s=stats(month,false);
+  renderList(s);renderRep(s,p);
+  $("okBanner").classList.toggle("hide",!days.some(d=>d.date===today()));
+}
+$("a_date").value=today();
+</script>
+</body>
+</html>
