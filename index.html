@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="bn" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My OT BD -  মাসিক বেতন ও ওভারটাইম ট্র্যাকার</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          emerald: {
+            50: '#ecfdf5',
+            100: '#d1fae5',
+            500: '#10b981',
+            600: '#059669',
+            700: '#047857',
+            800: '#065f46',
+            900: '#064e3b',
+          },
+          amber: {
+            400: '#fbbf24',
+            500: '#f59e0b',
+            600: '#d97706',
+          }
+        },
+        fontFamily: {
+          sans: ['Hind Siliguri', 'Inter', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  body {
+    font-family: 'Hind Siliguri', 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Glassmorphism effects */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+  }
+  .dark .glass-card {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(30, 41, 59, 0.8);
+  }
+  
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+  }
+
+  /* Printable Stylesheet */
+  @media print {
+    body {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    .print-only {
+      display: block !important;
+    }
+    .print-container {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+  }
+  .print-only {
+    display: none;
+  }
+</style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24 md:pb-6 transition-colors duration-200">
+
+<div id="app" class="max-w-4xl mx-auto px-3 sm:px-4 pt-3">
+  
+  <!-- Top Navigation Header -->
+  <header class="no-print glass-card rounded-2xl p-3 sm:p-4 mb-4 shadow-sm flex items-center justify-between gap-2">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        OT
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+          My OT BD
+          <span class="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">v3.0 Pro</span>
+        </h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400">গার্মেন্টস ও ফ্যাক্টরি বেতন ও ওভারটাইম ট্র্যাকার</p>
+      </div>
+    </div>
+
+    <!-- Header Right Action Controls -->
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <!-- Dark Mode Toggle -->
+      <button id="themeToggleBtn" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="থিম পরিবর্তন">
+        <span id="themeIcon">🌙</span>
+      </button>
+
+      <!-- Auth Action Button -->
+      <button id="authBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
+        <span id="authIcon">🔑</span>
+        <span id="authText">লগইন</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Profile Switcher & Sync Banner -->
+  <div class="no-print glass-card rounded-2xl p-3 mb-4 shadow-sm flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-emerald-500">
+    <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+      <span class="text-lg">🪪</span>
+      <div class="flex-1">
+        <label class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">বর্তমান প্রোফাইল নির্বাচন করুন:</label>
+        <select id="profileSelect" class="w-full bg-transparent font-bold text-sm text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer">
+          <!-- Dynamically populated -->
+        </select>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span id="syncBadge" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        গেস্ট মোড
+      </span>
+      <button id="editProfileQuickBtn" class="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition text-xs font-semibold">
+        ⚙️ সেটআপ
+      </button>
+    </div>
+  </div>
+
+  <!-- Desktop Navigation Tabs -->
+  <nav class="no-print hidden md:flex items-center justify-around glass-card rounded-2xl p-1.5 mb-4 shadow-sm text-sm font-medium">
+    <button data-tab="dashboard" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-xl transition text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 font-bold">
+      <span>🏠</span> ড্যাশবোর্ড ও ক্যালেন্ডার
+    </button>
+    <button data-tab="add" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-xl transition text-slate-600 dark:text-slate-400 hover:text-emerald-600">
+      <span>➕</span> ওটি এন্ট্রি
+    </button>
+    <button data-tab="list" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-xl transition text-slate-600 dark:text-slate-400 hover:text-emerald-600">
+      <span>📋</span> ওটি তালিকা
+    </button>
+    <button data-tab="report" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-xl transition text-slate-600 dark:text-slate-400 hover:text-emerald-600">
+      <span>📊</span> পে-স্লিপ
+    </button>
+    <button data-tab="calc" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-xl transition text-slate-600 dark:text-slate-400 hover:text-emerald-600">
+      <span>🧮</span> ক্যালকুলেটর
+    </button>
+    <button data-tab="profile" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-xl transition text-slate-600 dark:text-slate-400 hover:text-emerald-600">
+      <span>👤</span> প্রোফাইল
+    </button>
+  </nav>
+
+  <!-- MAIN TAB CONTENT PANELS -->
+  <main>
+    
+    <!-- TAB 1: DASHBOARD & CALENDAR -->
+    <section id="tab_dashboard" class="tab-content space-y-4">
+      
+      <!-- Hero Employee Summary Card -->
+      <div class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-700 text-white rounded-3xl p-5 shadow-lg shadow-emerald-600/20 relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+        
+        <div class="flex items-center justify-between mb-3 relative z-10">
+          <div>
+            <h2 id="dashEmpName" class="text-xl sm:text-2xl font-bold">কর্মীর নাম...</h2>
+            <p id="dashEmpSub" class="text-xs text-emerald-100">মেইন বেতন: ৳0 | বেসিক: ৳0</p>
+          </div>
+          <span class="bg-amber-400 text-slate-900 font-bold text-xs px-3 py-1 rounded-full shadow-sm">
+            সক্রিয় প্রোফাইল
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-emerald-500/40 relative z-10 text-center">
+          <div class="bg-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+            <span class="block text-[11px] text-emerald-100">মোট ওটি ঘন্টা</span>
+            <b id="dashOtHrs" class="text-lg sm:text-xl font-black text-amber-300">0h</b>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+            <span class="block text-[11px] text-emerald-100">ওটি বাবদ আয়</span>
+            <b id="dashOtPay" class="text-lg sm:text-xl font-black text-white">৳0</b>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+            <span class="block text-[11px] text-emerald-100">উপস্থিত / মোট</span>
+            <b id="dashDays" class="text-lg sm:text-xl font-black text-white">0/0 দিন</b>
+          </div>
+          <div class="bg-white/10 rounded-2xl p-2.5 backdrop-blur-sm">
+            <span class="block text-[11px] text-emerald-100">আনুমানিক নিট বেতন</span>
+            <b id="dashNetPay" class="text-lg sm:text-xl font-black text-amber-300">৳0</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- OT Goal Tracker Bar -->
+      <div class="glass-card rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between text-xs font-semibold mb-1.5">
+          <span class="text-slate-600 dark:text-slate-300">মাসিক ওটি লক্ষ্যমাত্রা (৬০ ঘণ্টা):</span>
+          <span id="dashGoalText" class="text-emerald-600 dark:text-emerald-400 font-bold">0% সম্পন্ন</span>
+        </div>
+        <div class="w-full h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="dashGoalBar" class="h-full bg-gradient-to-r from-emerald-500 to-amber-400 rounded-full transition-all duration-500" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Visual Monthly Calendar Grid -->
+      <div class="glass-card rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-base text-slate-800 dark:text-white flex items-center gap-2">
+            📅 মাসভিত্তিক ভিজ্যুয়াল ক্যালেন্ডার
+          </h3>
+          <!-- Month Switcher Controls -->
+          <div class="flex items-center gap-2">
+            <button id="prevMonthBtn" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold">◀</button>
+            <span id="calendarMonthLabel" class="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400">মার্চ ২০২৬</span>
+            <button id="nextMonthBtn" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold">▶</button>
+          </div>
+        </div>
+
+        <!-- Legend Bar -->
+        <div class="flex flex-wrap items-center gap-3 text-[11px] mb-3 pb-2 border-b border-slate-100 dark:border-slate-800 text-slate-500">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ওটি ডিউটি</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> অনুপস্থিত</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> বন্ধ / ২x ওটি</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></span> ৮ঘণ্টা রেগুলার</span>
+        </div>
+
+        <!-- Day Names Grid Header -->
+        <div class="grid grid-cols-7 gap-1 text-center font-bold text-xs text-slate-400 mb-2">
+          <div>রবি</div><div>সোম</div><div>মঙ্গল</div><div>বুধ</div><div>বৃহ</div><div>শুক্র</div><div>শনি</div>
+        </div>
+
+        <!-- Calendar Days Render Box -->
+        <div id="calendarGrid" class="grid grid-cols-7 gap-1 sm:gap-1.5">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DAILY ENTRY FORM -->
+    <section id="tab_add" class="tab-content hidden space-y-4">
+      <div id="entryStatusBanner" class="hidden p-3 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center justify-between">
+        <span>✅ নির্বাচিত তারিখের রেকর্ড পূর্বে সংরক্ষিত আছে। সম্পাদনা করছেন।</span>
+        <span class="text-xs bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">EDITING</span>
+      </div>
+
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <h3 class="font-bold text-base text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">
+          ✍️ দৈনিক ওটি ও হাজিরা ইনপুট
+        </h3>
+
+        <!-- Date Picker with Quick Select -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">তারিখ চয়ন করুন:</label>
+            <div class="flex gap-1.5 text-xs">
+              <button id="btnDateToday" class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 font-bold">আজ</button>
+              <button id="btnDateYesterday" class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold">গতকাল</button>
+            </div>
+          </div>
+          <input type="date" id="entryDate" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        </div>
+
+        <!-- Attendance Checkbox -->
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div>
+            <span class="block text-sm font-bold text-slate-800 dark:text-slate-200">অনুপস্থিত (Absent) চিহ্নিত করুন</span>
+            <small class="text-slate-500 text-[11px]">টিক দিলে ওই দিনের ওটি ও বিল বাতিল হবে এবং বেসিক থেকে কর্তন হবে</small>
+          </div>
+          <input type="checkbox" id="entryAbsent" class="w-5 h-5 accent-emerald-600 rounded cursor-pointer">
+        </div>
+
+        <!-- OT Hours Input & Quick Add Buttons -->
+        <div id="otHoursContainer" class="space-y-2">
+          <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">ওভারটাইম ঘণ্টা (OT Hours):</label>
+          <div class="flex items-center gap-2">
+            <input type="number" id="entryOt" step="0.5" min="0" value="0" inputmode="decimal" class="w-28 p-3 text-center text-lg font-black rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <span class="text-xs font-bold text-slate-500">ঘণ্টা</span>
+          </div>
+
+          <!-- Quick Increment Buttons -->
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <button data-add-ot="0.5" class="quick-ot-btn px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100">+০.৫ঘণ্টা</button>
+            <button data-add-ot="1" class="quick-ot-btn px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100">+১ ঘণ্টা</button>
+            <button data-add-ot="2" class="quick-ot-btn px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100">+২ ঘণ্টা</button>
+            <button data-add-ot="3" class="quick-ot-btn px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100">+৩ ঘণ্টা</button>
+            <button data-add-ot="4" class="quick-ot-btn px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-100">+৪ ঘণ্টা</button>
+            <button id="clearOtBtn" class="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold">রিসেট</button>
+          </div>
+        </div>
+
+        <!-- Shift & Bill Toggles -->
+        <div id="billsContainer" class="space-y-2 pt-1">
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="block text-sm font-bold text-slate-800 dark:text-slate-200">উৎসব / সরকারী বন্ধের ২x ডাবল ওটি রেট</span>
+              <small class="text-amber-600 dark:text-amber-400 text-[11px]">ছুটির দিনের অতিরিক্ত ওভারটাইম দ্বিগুণ হারে হিসাব হবে</small>
+            </div>
+            <input type="checkbox" id="entryHoliday" class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="block text-sm font-bold text-slate-800 dark:text-slate-200">নাইট শিফট ডিউটি (<span id="lblNightRate">৳100</span>)</span>
+              <small class="text-slate-500 text-[11px]">রাত্রিকালীন শিফটের প্রযোজ্য ভাতা যোগ হবে</small>
+            </div>
+            <input type="checkbox" id="entryNight" class="w-5 h-5 accent-emerald-600 rounded cursor-pointer">
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="block text-sm font-bold text-slate-800 dark:text-slate-200">টিফিন বিল (<span id="lblTiffinRate">৳50</span>)</span>
+              <small class="text-slate-500 text-[11px]">আজকের জন্য টিফিন ভাতা প্রদান করা হবে</small>
+            </div>
+            <input type="checkbox" id="entryTiffin" class="w-5 h-5 accent-emerald-600 rounded cursor-pointer">
+          </div>
+        </div>
+
+        <!-- Remarks / Section Input -->
+        <div>
+          <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">মন্তব্য / সেকশন নোট (ঐচ্ছিক):</label>
+          <input type="text" id="entryRemarks" placeholder="যেমন: সেকশন এ অতিরিক্ত ২ ঘণ্টা, লেট নাইট ডিউটি" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-white text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        </div>
+
+        <!-- Live Daily Calculation Preview Card -->
+        <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-xs space-y-1">
+          <div class="flex justify-between font-bold text-slate-700 dark:text-slate-300">
+            <span>আজকের আনুমানিক হিসাব:</span>
+            <span id="lblHourlyRate" class="text-emerald-700 dark:text-emerald-400">প্রতি ঘণ্টা: ৳0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600 dark:text-slate-400">
+            <span>ওটি বাবদ আয়:</span>
+            <span id="lblLiveOtPay" class="font-bold">৳0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600 dark:text-slate-400">
+            <span>ভাতা (নাইট + টিফিন):</span>
+            <span id="lblLiveBills" class="font-bold">৳0.00</span>
+          </div>
+          <div class="flex justify-between text-sm font-black text-emerald-800 dark:text-emerald-300 pt-1 border-t border-emerald-200 dark:border-emerald-800">
+            <span>মোট দৈনিক অতিরিক্ত প্রদেয়:</span>
+            <span id="lblLiveTotalDay">৳0.00</span>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <button id="saveEntryBtn" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 active:scale-[0.99] transition">
+          💾 রেকর্ড সংরক্ষণ করুন
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 3: ENTRIES LIST & FILTER -->
+    <section id="tab_list" class="tab-content hidden space-y-4">
+      
+      <!-- Month Selector Chips -->
+      <div class="glass-card rounded-2xl p-3 shadow-sm">
+        <label class="block text-xs font-semibold text-slate-500 mb-2">মাস পরিবর্তন করুন:</label>
+        <div id="listMonthChips" class="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <!-- Dynamically populated month chips -->
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="glass-card rounded-2xl p-3 shadow-sm space-y-2">
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <button data-filter="all" class="filter-btn px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">সব এন্ট্রি</button>
+          <button data-filter="ot" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">শুধু ওটি</button>
+          <button data-filter="absent" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">অনুপস্থিত</button>
+          <button data-filter="night" class="filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">নাইট শিফট</button>
+        </div>
+        <input type="text" id="listSearchInput" placeholder="🔍 মন্তব্য দিয়ে খুঁজুন..." class="w-full p-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+      </div>
+
+      <!-- Monthly Summary Quick Stats -->
+      <div id="listStatsBar" class="grid grid-cols-4 gap-2 text-center text-xs">
+        <!-- Dynamic stats -->
+      </div>
+
+      <!-- Entries Container -->
+      <div id="entriesList" class="space-y-2.5">
+        <!-- Dynamic list cards -->
+      </div>
+    </section>
+
+    <!-- TAB 4: PAYSLIP & REPORT -->
+    <section id="tab_report" class="tab-content hidden space-y-4">
+      
+      <!-- Month Selector Chips -->
+      <div class="no-print glass-card rounded-2xl p-3 shadow-sm">
+        <label class="block text-xs font-semibold text-slate-500 mb-2">মাসিক পে-স্লিপ দেখুন:</label>
+        <div id="reportMonthChips" class="flex gap-2 overflow-x-auto pb-1">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- PAYSLIP CARD (PRINTABLE CONTAINER) -->
+      <div id="printablePayslip" class="print-container glass-card rounded-3xl p-5 shadow-md border border-slate-200 dark:border-slate-800 space-y-4 bg-white dark:bg-slate-900">
+        
+        <!-- Printable Header -->
+        <div class="flex items-start justify-between border-b pb-4 border-slate-200 dark:border-slate-800">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">মাসিক বেতন ও ওভারটাইম পে-স্লিপ</h2>
+            <p id="slipCompany" class="text-xs text-slate-500">মাই ওটি বিডি (বাংলাদেশ গার্মেন্টস স্যালারি ভাউচার)</p>
+          </div>
+          <div class="text-right">
+            <span id="slipMonthName" class="text-sm font-black text-emerald-600 dark:text-emerald-400">মার্চ ২০২৬</span>
+            <p id="slipProfileName" class="text-xs font-semibold text-slate-700 dark:text-slate-300">কর্মী: মোহাম্মদ রহিম</p>
+          </div>
+        </div>
+
+        <!-- Payslip Config Toggles (Hidden during print) -->
+        <div class="no-print bg-slate-50 dark:bg-slate-950/60 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-2 text-xs">
+          <label class="flex items-center gap-2 cursor-pointer font-medium">
+            <input type="checkbox" id="chkIncBonus" checked class="accent-emerald-600">
+            <span>হাজিরা বোনাস যোগ করুন</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer font-medium">
+            <input type="checkbox" id="chkIncNight" checked class="accent-emerald-600">
+            <span>নাইট শিফট বিল যোগ করুন</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer font-medium">
+            <input type="checkbox" id="chkIncTiffin" checked class="accent-emerald-600">
+            <span>টিফিন বিল যোগ করুন</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer font-medium">
+            <input type="checkbox" id="chkIncAdvance" checked class="accent-emerald-600">
+            <span>অগ্রিম/ঋণ বিয়োগ করুন</span>
+          </label>
+        </div>
+
+        <!-- Breakdown Table -->
+        <div class="space-y-2 text-xs sm:text-sm">
+          <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">মূল বেতন (Gross Salary)</span>
+            <span id="slipGross" class="font-bold text-slate-800 dark:text-slate-200">৳0.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">হিসাবকৃত বেসিক (Basic Salary)</span>
+            <span id="slipBasic" class="font-bold text-slate-800 dark:text-slate-200">৳0.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">ওভারটাইম আয় (<span id="slipOtHrsLabel">0</span> ঘণ্টা)</span>
+            <span id="slipOtPay" class="font-bold text-emerald-600 dark:text-emerald-400">৳0.00</span>
+          </div>
+          <div id="rowSlipNight" class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">নৈশকালীন ভাতা / নাইট বিল</span>
+            <span id="slipNightPay" class="font-bold text-slate-800 dark:text-slate-200">৳0.00</span>
+          </div>
+          <div id="rowSlipTiffin" class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">টিফিন বিল</span>
+            <span id="slipTiffinPay" class="font-bold text-slate-800 dark:text-slate-200">৳0.00</span>
+          </div>
+          <div id="rowSlipBonus" class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">হাজিরা বোনাস</span>
+            <span id="slipBonusPay" class="font-bold text-slate-800 dark:text-slate-200">৳0.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-slate-600 dark:text-slate-400">যাতায়াত / অন্যান্য ভাতা</span>
+            <span id="slipAllowancePay" class="font-bold text-slate-800 dark:text-slate-200">৳0.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800 text-rose-600">
+            <span>অনুপস্থিতি কর্তন (<span id="slipAbsentDays">0</span> দিন)</span>
+            <span id="slipAbsentDed" class="font-bold">- ৳0.00</span>
+          </div>
+          <div id="rowSlipAdvance" class="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800 text-rose-600">
+            <span>অগ্রিম উত্তোলন / ঋণ কর্তন</span>
+            <span id="slipAdvanceDed" class="font-bold">- ৳0.00</span>
+          </div>
+
+          <!-- Grand Net Total Card -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white flex justify-between items-center mt-3 shadow-md">
+            <div>
+              <span class="block text-xs text-emerald-100">সর্বমোট নিট প্রদেয় বেতন:</span>
+              <small class="text-[10px] text-emerald-100">(গ্রস + ওটি + ভাতা - কর্তন)</small>
+            </div>
+            <span id="slipNetTotal" class="text-2xl font-black text-amber-300">৳0.00</span>
+          </div>
+        </div>
+
+        <!-- Print Signature Fields (Only visible on print) -->
+        <div class="print-only pt-12 grid grid-cols-2 gap-8 text-center text-xs">
+          <div class="border-t border-black pt-2">কর্মীর স্বাক্ষর</div>
+          <div class="border-t border-black pt-2">কর্তৃপক্ষের স্বাক্ষর / সিল</div>
+        </div>
+      </div>
+
+      <!-- Action Buttons for PDF, CSV, WhatsApp -->
+      <div class="no-print glass-card rounded-2xl p-4 shadow-sm space-y-3">
+        <h3 class="font-bold text-xs text-slate-500 uppercase tracking-wider">📤 পে-স্লিপ শেয়ার ও এক্সপোর্ট</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button id="btnPdfPrint" class="py-2.5 px-3 rounded-xl bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-1.5">
+            <span>🖨️</span> প্রিন্ট / PDF
+          </button>
+          <button id="btnExportCsv" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5">
+            <span>📥</span> CSV ডাউনলোড
+          </button>
+          <button id="btnShareWa" class="py-2.5 px-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center justify-center gap-1.5">
+            <span>💬</span> হোয়াটসঅ্যাপ
+          </button>
+          <button id="btnCopySlip" class="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs flex items-center justify-center gap-1.5">
+            <span>📋</span> টেক্সট কপি
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: CALCULATOR -->
+    <section id="tab_calc" class="tab-content hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <h3 class="font-bold text-base text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">
+          🧮 দ্রুত বেতন ও ওটি ক্যালকুলেটর
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">গ্রস বেতন (Gross Salary ৳):</label>
+            <input type="number" id="calcGross" placeholder="12500" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">আইন অনুযায়ী নিয়ম:</label>
+            <select id="calcMode" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
+              <option value="law">BLL বিএলএল (গ্রস - ২৪৫০)</option>
+              <option value="epz">EPZ ইপিজেড (গ্রস - ২৩৭৫)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">অনুমানিক ওটি ঘণ্টা:</label>
+            <input type="number" id="calcOtHours" placeholder="50" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">ঈদ / উৎসব বোনাস হার:</label>
+            <select id="calcEidBonus" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
+              <option value="50">বেসিকের ৫০% (অর্ধেক বোনাস)</option>
+              <option value="100">বেসিকের ১০০% (পূর্ণ বোনাস)</option>
+              <option value="0">বোনাস নেই</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="runCalcBtn" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md">
+          হিসাব করুন
+        </button>
+
+        <!-- Calculator Result Container -->
+        <div id="calcResultBox" class="hidden p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: PROFILE SETUP & SETTINGS -->
+    <section id="tab_profile" class="tab-content hidden space-y-4">
+      <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+          <h3 class="font-bold text-base text-slate-800 dark:text-white">
+            👤 প্রোফাইল ও বেতনের হার সেটআপ
+          </h3>
+          <button id="btnAddNewProfile" class="px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-xs">
+            + নতুন প্রোফাইল
+          </button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">কর্মীর নাম / পদবী:</label>
+            <input type="text" id="profName" placeholder="যেমন: মো: রহিম (অপারেটর)" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">মেইন স্যালারি / গ্রস (Gross ৳):</label>
+              <input type="number" id="profGross" placeholder="12500" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">হিসাবের নিয়ম:</label>
+              <select id="profMode" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold">
+                <option value="law">BLL বিএলএল (গ্রস - ২৪৫০ ÷ ১.৫)</option>
+                <option value="epz">EPZ ইপিজেড (গ্রস - ২৩৭৫ ÷ ১.৫)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Calculated Preview -->
+          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs">
+            <span class="block font-bold text-emerald-800 dark:text-emerald-300">হিসাবকৃত মূল বেসিক: <span id="lblProfBasic">৳0.00</span></span>
+            <small class="text-slate-500">আইনসম্মত ঘণ্টাপ্রতি ওটি রেট (Basic ÷ ২০৮ × ২): <b id="lblProfSugRate" class="text-emerald-600">৳0.00</b></small>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">কাস্টম ওটি রেট (ঐচ্ছিক):</label>
+              <input type="number" id="profCustomRate" placeholder="অটো রেট ব্যবহার হবে" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">নাইট বিল (প্রতি নাইট ৳):</label>
+              <input type="number" id="profNight" placeholder="100" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">টিফিন বিল (প্রতি দিন ৳):</label>
+              <input type="number" id="profTiffin" placeholder="50" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">হাজিরা বোনাস (৳):</label>
+              <input type="number" id="profBonus" placeholder="500" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">যাতায়াত/অন্যান্য ভাতা (৳):</label>
+              <input type="number" id="profAllowance" placeholder="0" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-600 dark:text-slate-300 mb-1">মাসিক ঋণ/অগ্রিম (৳):</label>
+              <input type="number" id="profAdvance" placeholder="0" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
+            </div>
+          </div>
+
+          <button id="btnSaveProfile" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md">
+            ✔ প্রোফাইল তথ্য সংরক্ষণ করুন
+          </button>
+        </div>
+
+        <!-- Data Backup & Restore Section -->
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
+          <h4 class="font-bold text-xs text-slate-600 dark:text-slate-300">📁 ডাটা ব্যাকআপ ও রিস্টোর (Offline Import/Export)</h4>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button id="btnExportJson" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-bold flex items-center justify-center gap-1">
+              <span>💾</span> ব্যাকআপ ডাউনলোড
+            </button>
+            <label class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-bold flex items-center justify-center gap-1 cursor-pointer text-center">
+              <span>📂</span> ফাইল রিস্টোর
+              <input type="file" id="btnImportJson" accept=".json" class="hidden">
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="no-print md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around z-40">
+    <button data-tab="dashboard" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-emerald-600 font-bold">
+      <span class="text-base">🏠</span>
+      <span class="text-[10px]">ড্যাশবোর্ড</span>
+    </button>
+    <button data-tab="add" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400">
+      <span class="text-base">➕</span>
+      <span class="text-[10px]">ওটি যোগ</span>
+    </button>
+    <button data-tab="list" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400">
+      <span class="text-base">📋</span>
+      <span class="text-[10px]">তালিকা</span>
+    </button>
+    <button data-tab="report" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400">
+      <span class="text-base">📊</span>
+      <span class="text-[10px]">পে-স্লিপ</span>
+    </button>
+    <button data-tab="calc" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400">
+      <span class="text-base">🧮</span>
+      <span class="text-[10px]">হিসাব</span>
+    </button>
+    <button data-tab="profile" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400">
+      <span class="text-base">👤</span>
+      <span class="text-[10px]">প্রোফাইল</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- Custom Toast Notification Box -->
+<div id="toastNotification" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl bg-slate-900/90 text-white text-xs font-semibold shadow-xl backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+  বার্তা...
+</div>
+
+<!-- Custom Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 max-w-sm w-full space-y-4 shadow-2xl border border-slate-200 dark:border-slate-800 text-center">
+    <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 text-xl flex items-center justify-center mx-auto">
+      ⚠️
+    </div>
+    <div>
+      <h3 id="confirmModalTitle" class="font-bold text-base text-slate-900 dark:text-white">নিশ্চিতকরণ</h3>
+      <p id="confirmModalDesc" class="text-xs text-slate-500 mt-1">আপনি কি নিশ্চিত যে এই ডেটাটি মুছে ফেলতে চান?</p>
+    </div>
+    <div class="flex gap-2 pt-2">
+      <button id="confirmCancelBtn" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs">বাতিল</button>
+      <button id="confirmOkBtn" class="flex-1 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs">হ্যাঁ, মুছুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Application JavaScript Engine -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, collection, onSnapshot 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const defaultFirebaseConfig = {
+  apiKey: "AIzaSyBQLCC5n_To0JkMIgk5NGS7ipkK3idb2vs",
+  authDomain: "hajeraot.firebaseapp.com",
+  projectId: "hajeraot",
+  storageBucket: "hajeraot.firebasestorage.app",
+  messagingSenderId: "991169929289",
+  appId: "1:991169929289:web:a2c3cb03eacdb922229f98"
+};
+
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'my-ot-bd-app';
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultFirebaseConfig;
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* DOM Selector Shortener */
+const $ = id => document.getElementById(id);
+
+/* Currency & Date Formatting Helpers */
+const formatMoney = amount => "৳" + (Math.round((+amount || 0) * 100) / 100).toLocaleString("en-US", { maximumFractionDigits: 2 });
+const padZero = n => String(n).padStart(2, '0');
+
+const getTodayString = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())}`;
+};
+
+const getMonthString = (d = new Date()) => `${d.getFullYear()}-${padZero(d.getMonth() + 1)}`;
+
+const getBengaliWeekday = dateStr => {
+  const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+  const d = new Date(dateStr + "T00:00:00");
+  return days[d.getDay()];
+};
+
+const getFormattedMonthYear = monthStr => {
+  const d = new Date(monthStr + "-01T00:00:00");
+  return d.toLocaleDateString("bn-BD", { month: "long", year: "numeric" });
+};
+
+const getLast12Months = () => {
+  const list = [];
+  const d = new Date();
+  d.setDate(1);
+  for (let i = 0; i < 12; i++) {
+    list.push(`${d.getFullYear()}-${padZero(d.getMonth() + 1)}`);
+    d.setMonth(d.getMonth() - 1);
+  }
+  return list;
+};
+
+/* Toast Notification Display */
+function showToast(message) {
+  const t = $("toastNotification");
+  t.textContent = message;
+  t.classList.remove("opacity-0", "pointer-events-none");
+  setTimeout(() => {
+    t.classList.add("opacity-0", "pointer-events-none");
+  }, 2200);
+}
+
+let currentUser = null;
+let currentProfiles = [];
+let activeProfileId = localStorage.getItem("myot_pid") || "default_prof";
+let currentDaysData = [];
+let activeMonth = getMonthString();
+let selectedFilter = "all";
+let unsubProfiles = null;
+let unsubDays = null;
+let confirmCallback = null;
+
+const DEDUCTION_CONSTANTS = { law: 2450, epz: 2375 };
+
+/* Salary Calculation Engine */
+function calculateRates(profile) {
+  if (!profile) return { gross: 0, basic: 0, sugRate: 0, otRate: 0 };
+  const gross = +profile.gross || 0;
+  const mode = profile.mode || "law";
+  const dedConstant = DEDUCTION_CONSTANTS[mode] || 2450;
+  
+  const basic = gross > 0 ? (gross - dedConstant) / 1.5 : 0;
+  const sugRate = basic > 0 ? (basic / 208) * 2 : 0;
+  const otRate = profile.customRate && +profile.customRate > 0 ? +profile.customRate : sugRate;
+  
+  return { gross, basic, sugRate, otRate };
+}
+
+function calculateMonthlyStats(profile, monthStr) {
+  if (!profile) return null;
+  const rates = calculateRates(profile);
+  const monthDays = currentDaysData.filter(d => d.date && d.date.startsWith(monthStr));
+  const workDays = monthDays.filter(d => !d.absent);
+  
+  const totalOtHours = workDays.reduce((sum, d) => sum + (+d.ot || 0), 0);
+  
+  // Calculate OT earnings considering 2.0x holiday rate multiplier
+  const totalOtPay = workDays.reduce((sum, d) => {
+    const rateMultiplier = d.holiday ? 2.0 : 1.0;
+    return sum + ((+d.ot || 0) * (rates.otRate * rateMultiplier));
+  }, 0);
+
+  const nightRate = profile.night !== undefined && profile.night !== "" ? +profile.night : 100;
+  const tiffinRate = profile.tiffin !== undefined && profile.tiffin !== "" ? +profile.tiffin : 50;
+  const bonusRate = profile.bonus !== undefined && profile.bonus !== "" ? +profile.bonus : 500;
+  const allowance = +profile.allowance || 0;
+  const advance = +profile.advance || 0;
+
+  const totalNightCount = workDays.filter(d => d.night).length;
+  const totalTiffinCount = workDays.filter(d => d.tiffin).length;
+
+  const nightPay = totalNightCount * nightRate;
+  const tiffinPay = totalTiffinCount * tiffinRate;
+  const absentCount = monthDays.filter(d => d.absent).length;
+  const absentDeduction = (absentCount * rates.basic) / 30;
+
+  // Toggles check from report tab
+  const incBonus = $("chkIncBonus") ? $("chkIncBonus").checked : true;
+  const incNight = $("chkIncNight") ? $("chkIncNight").checked : true;
+  const incTiffin = $("chkIncTiffin") ? $("chkIncTiffin").checked : true;
+  const incAdvance = $("chkIncAdvance") ? $("chkIncAdvance").checked : true;
+
+  const netPayable = rates.gross + totalOtPay 
+    + (incNight ? nightPay : 0) 
+    + (incTiffin ? tiffinPay : 0) 
+    + (incBonus ? bonusRate : 0) 
+    + allowance 
+    - absentDeduction 
+    - (incAdvance ? advance : 0);
+
+  return {
+    rates,
+    monthDays,
+    presentDaysCount: workDays.length,
+    absentDaysCount: absentCount,
+    totalOtHours,
+    totalOtPay,
+    nightPay,
+    tiffinPay,
+    bonusRate,
+    allowance,
+    advance,
+    absentDeduction,
+    netPayable
+  };
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+  const target = $(`tab_${tabId}`);
+  if (target) target.classList.remove("hidden");
+
+  // Highlight Desktop Nav Buttons
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    const isMatch = btn.dataset.tab === tabId;
+    btn.classList.toggle("text-emerald-600", isMatch);
+    btn.classList.toggle("bg-emerald-50", isMatch);
+    btn.classList.toggle("dark:bg-emerald-950/60", isMatch);
+    btn.classList.toggle("font-bold", isMatch);
+  });
+
+  // Highlight Mobile Nav Buttons
+  document.querySelectorAll(".mobile-nav-btn").forEach(btn => {
+    const isMatch = btn.dataset.tab === tabId;
+    btn.classList.toggle("text-emerald-600", isMatch);
+    btn.classList.toggle("font-bold", isMatch);
+    btn.classList.toggle("text-slate-500", !isMatch);
+  });
+
+  if (tabId === "add") loadEntryFormForDate($("entryDate").value || getTodayString());
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll("[data-tab]").forEach(btn => {
+  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
+
+/* Dark Theme Toggle Logic */
+function setTheme(theme) {
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+    $("themeIcon").textContent = "☀️";
+  } else {
+    document.documentElement.classList.remove("dark");
+    $("themeIcon").textContent = "🌙";
+  }
+  localStorage.setItem("myot_theme", theme);
+}
+
+$("themeToggleBtn").addEventListener("click", () => {
+  const isDark = document.documentElement.classList.contains("dark");
+  setTheme(isDark ? "light" : "dark");
+});
+setTheme(localStorage.getItem("myot_theme") || "light");
+
+/* Local Storage Fallback Engine */
+function getLocalProfiles() {
+  const raw = localStorage.getItem("myot_local_profiles");
+  if (!raw) {
+    const def = [{ id: "p1", name: "আমার প্রোফাইল", gross: 12500, mode: "law", night: 100, tiffin: 50, bonus: 500 }];
+    localStorage.setItem("myot_local_profiles", JSON.stringify(def));
+    return def;
+  }
+  return JSON.parse(raw);
+}
+
+function saveLocalProfiles(profs) {
+  localStorage.setItem("myot_local_profiles", JSON.stringify(profs));
+}
+
+function getLocalDays(profileId) {
+  const raw = localStorage.getItem(`myot_local_days_${profileId}`);
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveLocalDays(profileId, days) {
+  localStorage.setItem(`myot_local_days_${profileId}`, JSON.stringify(days));
+}
+
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (unsubProfiles) unsubProfiles();
+  if (unsubDays) unsubDays();
+
+  if (user && !user.isAnonymous) {
+    $("authText").textContent = "লগআউট";
+    $("authIcon").textContent = "🚪";
+    $("syncBadge").className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800";
+    $("syncBadge").innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ক্লাউড সিঙ্কড`;
+
+    const profCol = collection(db, "artifacts", appId, "users", user.uid, "profiles");
+    unsubProfiles = onSnapshot(profCol, async snapshot => {
+      currentProfiles = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      if (currentProfiles.length === 0) {
+        const newDoc = await addDoc(profCol, {
+          name: user.displayName || "আমার প্রোফাইল",
+          gross: 12500,
+          mode: "law",
+          night: 100,
+          tiffin: 50,
+          bonus: 500
+        });
+        activeProfileId = newDoc.id;
+        localStorage.setItem("myot_pid", activeProfileId);
+      } else {
+        if (!currentProfiles.find(p => p.id === activeProfileId)) {
+          activeProfileId = currentProfiles[0].id;
+          localStorage.setItem("myot_pid", activeProfileId);
+        }
+      }
+      
+      populateProfileDropdown();
+      loadProfileForm();
+      subscribeToDays();
+    }, err => {
+      console.error("Profile sync error:", err);
+    });
+  } else {
+    $("authText").textContent = "লগইন";
+    $("authIcon").textContent = "🔑";
+    $("syncBadge").className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800";
+    $("syncBadge").innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> অফলাইন মোড`;
+
+    currentProfiles = getLocalProfiles();
+    if (!currentProfiles.find(p => p.id === activeProfileId)) {
+      activeProfileId = currentProfiles[0].id;
+      localStorage.setItem("myot_pid", activeProfileId);
+    }
+    populateProfileDropdown();
+    loadProfileForm();
+    loadLocalDays();
+  }
+});
+
+$("authBtn").addEventListener("click", async () => {
+  if (currentUser && !currentUser.isAnonymous) {
+    await signOut(auth);
+    showToast("লগআউট সম্পন্ন হয়েছে");
+  } else {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      showToast("Google লগইন সফল হয়েছে!");
+    } catch (e) {
+      showToast("লগইন ত্রুটি: " + e.message);
+    }
+  }
+});
+
+function loadLocalDays() {
+  currentDaysData = getLocalDays(activeProfileId);
+  renderAllViews();
+}
+
+function subscribeToDays() {
+  if (unsubDays) unsubDays();
+  if (!currentUser || currentUser.isAnonymous || !activeProfileId) {
+    loadLocalDays();
+    return;
+  }
+
+  const daysCol = collection(db, "artifacts", appId, "users", currentUser.uid, "profiles", activeProfileId, "days");
+  unsubDays = onSnapshot(daysCol, snapshot => {
+    currentDaysData = snapshot.docs.map(d => d.data());
+    renderAllViews();
+  }, err => {
+    console.error("Days sync error:", err);
+    loadLocalDays();
+  });
+}
+
+function getActiveProfile() {
+  return currentProfiles.find(p => p.id === activeProfileId) || null;
+}
+
+function populateProfileDropdown() {
+  const sel = $("profileSelect");
+  sel.innerHTML = currentProfiles.map(p => `<option value="${p.id}">${p.name || 'অজ্ঞাত პროფილი'} (৳${p.gross || 0})</option>`).join("");
+  sel.value = activeProfileId;
+}
+
+$("profileSelect").addEventListener("change", e => {
+  activeProfileId = e.target.value;
+  localStorage.setItem("myot_pid", activeProfileId);
+  loadProfileForm();
+  if (currentUser && !currentUser.isAnonymous) {
+    subscribeToDays();
+  } else {
+    loadLocalDays();
+  }
+});
+
+$("editProfileQuickBtn").addEventListener("click", () => switchTab("profile"));
+
+function loadProfileForm() {
+  const p = getActiveProfile();
+  if (!p) return;
+  
+  $("profName").value = p.name || "";
+  $("profGross").value = p.gross || "";
+  $("profMode").value = p.mode || "law";
+  $("profCustomRate").value = p.customRate || "";
+  $("profNight").value = p.night ?? 100;
+  $("profTiffin").value = p.tiffin ?? 50;
+  $("profBonus").value = p.bonus ?? 500;
+  $("profAllowance").value = p.allowance || "";
+  $("profAdvance").value = p.advance || "";
+
+  updateProfilePreview();
+}
+
+function updateProfilePreview() {
+  const gross = +$("profGross").value || 0;
+  const mode = $("profMode").value;
+  const rates = calculateRates({ gross, mode, customRate: $("profCustomRate").value });
+  
+  $("lblProfBasic").textContent = formatMoney(rates.basic);
+  $("lblProfSugRate").textContent = formatMoney(rates.sugRate) + "/ঘণ্টা";
+}
+
+["profGross", "profMode", "profCustomRate"].forEach(id => {
+  $(id).addEventListener("input", updateProfilePreview);
+});
+
+$("btnSaveProfile").addEventListener("click", async () => {
+  const name = $("profName").value.trim() || "প্রোফাইল";
+  const gross = +$("profGross").value || 0;
+  const mode = $("profMode").value;
+  const customRate = +$("profCustomRate").value || 0;
+  const night = +$("profNight").value || 0;
+  const tiffin = +$("profTiffin").value || 0;
+  const bonus = +$("profBonus").value || 0;
+  const allowance = +$("profAllowance").value || 0;
+  const advance = +$("profAdvance").value || 0;
+
+  if (currentUser && !currentUser.isAnonymous && activeProfileId) {
+    await setDoc(doc(db, "artifacts", appId, "users", currentUser.uid, "profiles", activeProfileId), {
+      name, gross, mode, customRate, night, tiffin, bonus, allowance, advance
+    }, { merge: true });
+  } else {
+    const profs = getLocalProfiles();
+    const idx = profs.findIndex(p => p.id === activeProfileId);
+    if (idx !== -1) {
+      profs[idx] = { ...profs[idx], name, gross, mode, customRate, night, tiffin, bonus, allowance, advance };
+      saveLocalProfiles(profs);
+      currentProfiles = profs;
+      populateProfileDropdown();
+    }
+  }
+
+  showToast("প্রোফাইল সংরক্ষিত হয়েছে ✓");
+  renderAllViews();
+});
+
+$("btnAddNewProfile").addEventListener("click", async () => {
+  if (currentUser && !currentUser.isAnonymous) {
+    const newDoc = await addDoc(collection(db, "artifacts", appId, "users", currentUser.uid, "profiles"), {
+      name: "নতুন কর্মী",
+      gross: 12500,
+      mode: "law"
+    });
+    activeProfileId = newDoc.id;
+  } else {
+    const profs = getLocalProfiles();
+    const newId = "p_" + Date.now();
+    profs.push({ id: newId, name: "নতুন কর্মী", gross: 12500, mode: "law" });
+    saveLocalProfiles(profs);
+    currentProfiles = profs;
+    activeProfileId = newId;
+    populateProfileDropdown();
+  }
+  
+  localStorage.setItem("myot_pid", activeProfileId);
+  showToast("নতুন প্রোফাইল তৈরি হয়েছে");
+  subscribeToDays();
+});
+
+function loadEntryFormForDate(dateStr) {
+  $("entryDate").value = dateStr;
+  const existing = currentDaysData.find(d => d.date === dateStr);
+
+  const p = getActiveProfile();
+  if (p) {
+    $("lblNightRate").textContent = formatMoney(p.night ?? 100);
+    $("lblTiffinRate").textContent = formatMoney(p.tiffin ?? 50);
+  }
+
+  if (existing) {
+    $("entryAbsent").checked = !!existing.absent;
+    $("entryOt").value = existing.ot || 0;
+    $("entryHoliday").checked = !!existing.holiday;
+    $("entryNight").checked = !!existing.night;
+    $("entryTiffin").checked = !!existing.tiffin;
+    $("entryRemarks").value = existing.remarks || "";
+    $("entryStatusBanner").classList.remove("hidden");
+  } else {
+    $("entryAbsent").checked = false;
+    $("entryOt").value = 0;
+    $("entryHoliday").checked = false;
+    $("entryNight").checked = false;
+    $("entryTiffin").checked = false;
+    $("entryRemarks").value = "";
+    $("entryStatusBanner").classList.add("hidden");
+  }
+
+  updateLiveEntryCalculation();
+}
+
+function updateLiveEntryCalculation() {
+  const p = getActiveProfile();
+  if (!p) return;
+  
+  const rates = calculateRates(p);
+  const isAbsent = $("entryAbsent").checked;
+  const otHrs = isAbsent ? 0 : (+$("entryOt").value || 0);
+  const isHoliday = $("entryHoliday").checked;
+  const isNight = isAbsent ? false : $("entryNight").checked;
+  const isTiffin = isAbsent ? false : $("entryTiffin").checked;
+
+  const effectiveOtRate = rates.otRate * (isHoliday ? 2.0 : 1.0);
+  const otPay = otHrs * effectiveOtRate;
+  const bills = (isNight ? (p.night ?? 100) : 0) + (isTiffin ? (p.tiffin ?? 50) : 0);
+
+  $("lblHourlyRate").textContent = `প্রতি ঘণ্টা: ${formatMoney(effectiveOtRate)} ${isHoliday ? '(২x)' : ''}`;
+  $("lblLiveOtPay").textContent = formatMoney(otPay);
+  $("lblLiveBills").textContent = formatMoney(bills);
+  $("lblLiveTotalDay").textContent = formatMoney(otPay + bills);
+
+  // Disable fields if absent
+  $("otHoursContainer").style.opacity = isAbsent ? "0.4" : "1";
+  $("billsContainer").style.opacity = isAbsent ? "0.4" : "1";
+}
+
+$("entryDate").addEventListener("change", e => loadEntryFormForDate(e.target.value));
+$("btnDateToday").addEventListener("click", () => loadEntryFormForDate(getTodayString()));
+$("btnDateYesterday").addEventListener("click", () => {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  loadEntryFormForDate(`${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())}`);
+});
+
+["entryAbsent", "entryOt", "entryHoliday", "entryNight", "entryTiffin"].forEach(id => {
+  $(id).addEventListener("input", updateLiveEntryCalculation);
+});
+
+document.querySelectorAll(".quick-ot-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const add = +btn.dataset.addOt;
+    const curr = +$("entryOt").value || 0;
+    $("entryOt").value = curr + add;
+    updateLiveEntryCalculation();
+  });
+});
+
+$("clearOtBtn").addEventListener("click", () => {
+  $("entryOt").value = 0;
+  updateLiveEntryCalculation();
+});
+
+$("saveEntryBtn").addEventListener("click", async () => {
+  const dateStr = $("entryDate").value;
+  if (!dateStr || !activeProfileId) return;
+
+  const absent = $("entryAbsent").checked;
+  const ot = absent ? 0 : (+$("entryOt").value || 0);
+  const holiday = absent ? false : $("entryHoliday").checked;
+  const night = absent ? false : $("entryNight").checked;
+  const tiffin = absent ? false : $("entryTiffin").checked;
+  const remarks = $("entryRemarks").value.trim();
+
+  const dayObj = { date: dateStr, absent, ot, holiday, night, tiffin, remarks };
+
+  if (currentUser && !currentUser.isAnonymous) {
+    await setDoc(
+      doc(db, "artifacts", appId, "users", currentUser.uid, "profiles", activeProfileId, "days", dateStr),
+      dayObj,
+      { merge: true }
+    );
+  } else {
+    const days = getLocalDays(activeProfileId);
+    const idx = days.findIndex(d => d.date === dateStr);
+    if (idx !== -1) {
+      days[idx] = dayObj;
+    } else {
+      days.push(dayObj);
+    }
+    saveLocalDays(activeProfileId, days);
+    currentDaysData = days;
+    renderAllViews();
+  }
+
+  showToast("দৈনিক ওটি রেকর্ড সংরক্ষিত হয়েছে ✓");
+  switchTab("dashboard");
+});
+
+function renderDashboard() {
+  const p = getActiveProfile();
+  if (!p) return;
+
+  $("dashEmpName").textContent = p.name || "আমার প্রোফাইল";
+  const rates = calculateRates(p);
+  $("dashEmpSub").textContent = `মেইন স্যালারি: ${formatMoney(rates.gross)} | বেসিক: ${formatMoney(rates.basic)}`;
+
+  const stats = calculateMonthlyStats(p, activeMonth);
+  if (!stats) return;
+
+  $("dashOtHrs").textContent = `${stats.totalOtHours}h`;
+  $("dashOtPay").textContent = formatMoney(stats.totalOtPay);
+  $("dashDays").textContent = `${stats.presentDaysCount} দিন`;
+  $("dashNetPay").textContent = formatMoney(stats.netPayable);
+
+  // Goal Bar (60 hours target)
+  const pct = Math.min(100, Math.round((stats.totalOtHours / 60) * 100));
+  $("dashGoalBar").style.width = pct + "%";
+  $("dashGoalText").textContent = `${pct}% সম্পন্ন (${stats.totalOtHours}/৬০h)`;
+
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const grid = $("calendarGrid");
+  grid.innerHTML = "";
+
+  const [yearStr, monthStr] = activeMonth.split("-");
+  const year = +yearStr;
+  const month = +monthStr;
+
+  $("calendarMonthLabel").textContent = getFormattedMonthYear(activeMonth);
+
+  const firstDayIndex = new Date(year, month - 1, 1).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  // Blank padding cells
+  for (let i = 0; i < firstDayIndex; i++) {
+    const blank = document.createElement("div");
+    blank.className = "h-10 sm:h-12 rounded-xl bg-slate-100/50 dark:bg-slate-900/30";
+    grid.appendChild(blank);
+  }
+
+  // Day Cells
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${padZero(month)}-${padZero(day)}`;
+    const record = currentDaysData.find(d => d.date === dateStr);
+
+    const cell = document.createElement("div");
+    let bgClass = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300";
+    let badgeText = "";
+
+    if (record) {
+      if (record.absent) {
+        bgClass = "bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800";
+        badgeText = "অনুপস্থিত";
+      } else if (record.holiday) {
+        bgClass = "bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800";
+        badgeText = record.ot > 0 ? `২x ${record.ot}h` : "ছুটি";
+      } else if (record.ot > 0) {
+        bgClass = "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-bold";
+        badgeText = `+${record.ot}h`;
+      }
+    }
+
+    cell.className = `h-10 sm:h-12 rounded-xl p-1 flex flex-col items-center justify-between cursor-pointer transition hover:scale-105 ${bgClass}`;
+    cell.innerHTML = `
+      <span class="text-[11px] font-bold">${day}</span>
+      <span class="text-[9px] font-semibold truncate w-full text-center">${badgeText}</span>
+    `;
+
+    cell.addEventListener("click", () => {
+      loadEntryFormForDate(dateStr);
+      switchTab("add");
+    });
+
+    grid.appendChild(cell);
+  }
+}
+
+$("prevMonthBtn").addEventListener("click", () => {
+  const d = new Date(activeMonth + "-01T00:00:00");
+  d.setMonth(d.getMonth() - 1);
+  activeMonth = getMonthString(d);
+  renderAllViews();
+});
+
+$("nextMonthBtn").addEventListener("click", () => {
+  const d = new Date(activeMonth + "-01T00:00:00");
+  d.setMonth(d.getMonth() + 1);
+  activeMonth = getMonthString(d);
+  renderAllViews();
+});
+
+function renderListChips() {
+  const container = $("listMonthChips");
+  container.innerHTML = getLast12Months().map(m => `
+    <button class="chip-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${m === activeMonth ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}" data-month="${m}">
+      ${m === activeMonth ? '✓ ' : ''}${getFormattedMonthYear(m)}
+    </button>
+  `).join("");
+
+  container.querySelectorAll(".chip-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeMonth = btn.dataset.month;
+      renderAllViews();
+    });
+  });
+}
+
+function renderEntriesList() {
+  renderListChips();
+  const p = getActiveProfile();
+  if (!p) return;
+
+  const stats = calculateMonthlyStats(p, activeMonth);
+  if (!stats) return;
+
+  // Quick stats bar
+  $("listStatsBar").innerHTML = `
+    <div class="glass-card rounded-xl p-2"><span class="block text-[10px] text-slate-500">মোট ওটি</span><b class="text-emerald-600">${stats.totalOtHours}h</b></div>
+    <div class="glass-card rounded-xl p-2"><span class="block text-[10px] text-slate-500">ওটি বাবদ আয়</span><b class="text-emerald-600">${formatMoney(stats.totalOtPay)}</b></div>
+    <div class="glass-card rounded-xl p-2"><span class="block text-[10px] text-slate-500">উপস্থিত</span><b class="text-slate-700 dark:text-slate-300">${stats.presentDaysCount} দিন</b></div>
+    <div class="glass-card rounded-xl p-2"><span class="block text-[10px] text-slate-500">অনুপস্থিত</span><b class="text-rose-600">${stats.absentDaysCount} দিন</b></div>
+  `;
+
+  const search = $("listSearchInput").value.trim().toLowerCase();
+  let list = stats.monthDays;
+
+  if (selectedFilter === "ot") list = list.filter(d => !d.absent && d.ot > 0);
+  if (selectedFilter === "absent") list = list.filter(d => d.absent);
+  if (selectedFilter === "night") list = list.filter(d => !d.absent && d.night);
+
+  if (search) {
+    list = list.filter(d => d.remarks && d.remarks.toLowerCase().includes(search));
+  }
+
+  list.sort((a, b) => b.date.localeCompare(a.date));
+
+  const container = $("entriesList");
+  if (list.length === 0) {
+    container.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">কোনো এন্ট্রি পাওয়া যায়নি</div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(d => {
+    const weekday = getBengaliWeekday(d.date);
+    const dayNum = d.date.split("-")[2];
+
+    if (d.absent) {
+      return `
+        <div class="glass-card rounded-2xl p-3 flex items-center justify-between border-l-4 border-l-rose-500">
+          <div>
+            <span class="text-xs font-bold text-rose-600">${d.date} (${weekday})</span>
+            <span class="block text-[11px] font-semibold text-rose-500">অনুপস্থিত (Absent)</span>
+          </div>
+          <button data-del-date="${d.date}" class="del-entry-btn p-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 text-xs">🗑️</button>
+        </div>
+      `;
+    }
+
+    const rateMult = d.holiday ? 2.0 : 1.0;
+    const otEarn = (d.ot || 0) * (stats.rates.otRate * rateMult);
+    const bills = (d.night ? (p.night ?? 100) : 0) + (d.tiffin ? (p.tiffin ?? 50) : 0);
+
+    return `
+      <div class="glass-card rounded-2xl p-3 flex items-center justify-between border-l-4 border-l-emerald-500">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-800 dark:text-slate-100">${d.date} (${weekday})</span>
+            ${d.holiday ? '<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded">২x ছুটি</span>' : ''}
+          </div>
+          <p class="text-xs text-emerald-600 font-bold mt-0.5">
+            ওটি: ${d.ot || 0}h (৳${otEarn.toFixed(1)}) 
+            ${bills > 0 ? `<span class="text-slate-500 font-normal">| ভাতা: ৳${bills}</span>` : ''}
+          </p>
+          ${d.remarks ? `<small class="text-[10px] text-slate-400 block">${d.remarks}</small>` : ''}
+        </div>
+        <div class="flex items-center gap-1">
+          <button data-edit-date="${d.date}" class="edit-entry-btn p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs">✏️</button>
+          <button data-del-date="${d.date}" class="del-entry-btn p-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 text-xs">🗑️️</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  container.querySelectorAll(".edit-entry-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      loadEntryFormForDate(btn.dataset.editDate);
+      switchTab("add");
+    });
+  });
+
+  container.querySelectorAll(".del-entry-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      confirmDeleteEntry(btn.dataset.delDate);
+    });
+  });
+}
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedFilter = btn.dataset.filter;
+    document.querySelectorAll(".filter-btn").forEach(b => {
+      b.className = "filter-btn px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold";
+    });
+    btn.className = "filter-btn px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold";
+    renderEntriesList();
+  });
+});
+
+$("listSearchInput").addEventListener("input", renderEntriesList);
+
+function confirmDeleteEntry(dateStr) {
+  $("confirmModalTitle").textContent = "রেকর্ড মুছুন";
+  $("confirmModalDesc").textContent = `${dateStr} তারিখের ওটি রেকর্ডটি মুছে ফেলতে চান?`;
+  $("confirmModal").classList.remove("hidden");
+
+  confirmCallback = async () => {
+    if (currentUser && !currentUser.isAnonymous) {
+      await deleteDoc(doc(db, "artifacts", appId, "users", currentUser.uid, "profiles", activeProfileId, "days", dateStr));
+    } else {
+      const days = getLocalDays(activeProfileId).filter(d => d.date !== dateStr);
+      saveLocalDays(activeProfileId, days);
+      currentDaysData = days;
+      renderAllViews();
+    }
+    showToast("রেকর্ড মুছে ফেলা হয়েছে");
+  };
+}
+
+$("confirmCancelBtn").addEventListener("click", () => {
+  $("confirmModal").classList.add("hidden");
+  confirmCallback = null;
+});
+
+$("confirmOkBtn").addEventListener("click", async () => {
+  $("confirmModal").classList.add("hidden");
+  if (confirmCallback) await confirmCallback();
+  confirmCallback = null;
+});
+
+function renderReportChips() {
+  const container = $("reportMonthChips");
+  container.innerHTML = getLast12Months().map(m => `
+    <button class="chip-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${m === activeMonth ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}" data-month="${m}">
+      ${m === activeMonth ? '✓ ' : ''}${getFormattedMonthYear(m)}
+    </button>
+  `).join("");
+
+  container.querySelectorAll(".chip-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeMonth = btn.dataset.month;
+      renderAllViews();
+    });
+  });
+}
+
+function renderPayslip() {
+  renderReportChips();
+  const p = getActiveProfile();
+  if (!p) return;
+
+  const stats = calculateMonthlyStats(p, activeMonth);
+  if (!stats) return;
+
+  $("slipMonthName").textContent = getFormattedMonthYear(activeMonth);
+  $("slipProfileName").textContent = `কর্মী: ${p.name || "আমার প্রোফাইল"}`;
+  $("slipGross").textContent = formatMoney(stats.rates.gross);
+  $("slipBasic").textContent = formatMoney(stats.rates.basic);
+  $("slipOtHrsLabel").textContent = stats.totalOtHours;
+  $("slipOtPay").textContent = formatMoney(stats.totalOtPay);
+  
+  $("slipNightPay").textContent = formatMoney(stats.nightPay);
+  $("slipTiffinPay").textContent = formatMoney(stats.tiffinPay);
+  $("slipBonusPay").textContent = formatMoney(stats.bonusRate);
+  $("slipAllowancePay").textContent = formatMoney(stats.allowance);
+  $("slipAbsentDays").textContent = stats.absentDaysCount;
+  $("slipAbsentDed").textContent = "- " + formatMoney(stats.absentDeduction);
+  $("slipAdvanceDed").textContent = "- " + formatMoney(stats.advance);
+
+  $("slipNetTotal").textContent = formatMoney(stats.netPayable);
+}
+
+["chkIncBonus", "chkIncNight", "chkIncTiffin", "chkIncAdvance"].forEach(id => {
+  if ($(id))$(id).addEventListener("change", renderPayslip);
+});
+
+/* Print & Export Actions */
+$("btnPdfPrint").addEventListener("click", () => window.print());
+
+$("btnExportCsv").addEventListener("click", () => {
+  const p = getActiveProfile();
+  if (!p) return;
+  const stats = calculateMonthlyStats(p, activeMonth);
+  
+  let csv = "Date,Weekday,Absent,OT_Hours,Holiday_2x,Night_Shift,Tiffin_Bill,Remarks\n";
+  stats.monthDays.forEach(d => {
+    csv += `"${d.date}","${getBengaliWeekday(d.date)}","${d.absent ? 'Yes' : 'No'}","${d.ot || 0}","${d.holiday ? 'Yes' : 'No'}","${d.night ? 'Yes' : 'No'}","${d.tiffin ? 'Yes' : 'No'}","${d.remarks || ''}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `OT_Report_${p.name || 'Profile'}_${activeMonth}.csv`;
+  a.click();
+  showToast("CSV ডাউনলোড সম্পন্ন হয়েছে");
+});
+
+$("btnCopySlip").addEventListener("click", () => {
+  const p = getActiveProfile();
+  const stats = calculateMonthlyStats(p, activeMonth);
+  if (!stats) return;
+
+  const summary = `
+📊 *মাসিক ওটি ও পে-স্লিপ (${getFormattedMonthYear(activeMonth)})*
+👤 কর্মী: ${p.name || 'প্রোফাইল'}
+💵 গ্রস বেতন: ${formatMoney(stats.rates.gross)}
+⏰ মোট ওটি ঘণ্টা: ${stats.totalOtHours}h
+💰 ওটি আয়: ${formatMoney(stats.totalOtPay)}
+🌙 নাইট বিল: ${formatMoney(stats.nightPay)}
+🍱 টিফিন বিল: ${formatMoney(stats.tiffinPay)}
+❌ অনুপস্থিতি কর্তন: ${formatMoney(stats.absentDeduction)}
+✅ *সর্বমোট নিট বেতন: ${formatMoney(stats.netPayable)}*
+  `.trim();
+
+  navigator.clipboard.writeText(summary);
+  showToast("সামারি কপি হয়েছে ✓");
+});
+
+$("btnShareWa").addEventListener("click", () => {
+  const p = getActiveProfile();
+  const stats = calculateMonthlyStats(p, activeMonth);
+  if (!stats) return;
+
+  const text = encodeURIComponent(`My OT BD Pay Slip - ${p.name} (${activeMonth}): Net Pay = ${formatMoney(stats.netPayable)}`);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+});
+
+/* Calculator Logic */
+$("runCalcBtn").addEventListener("click", () => {
+  const gross = +$("calcGross").value || 0;
+  const mode = $("calcMode").value;
+  const otHrs = +$("calcOtHours").value || 0;
+  const bonusPct = +$("calcEidBonus").value || 0;
+
+  const dedConst = DEDUCTION_CONSTANTS[mode] || 2450;
+  const basic = gross > 0 ? (gross - dedConst) / 1.5 : 0;
+  const otRate = basic > 0 ? (basic / 208) * 2 : 0;
+  const otPay = otHrs * otRate;
+  const eidBonus = (basic * bonusPct) / 100;
+  const total = gross + otPay + eidBonus;
+
+  const box = $("calcResultBox");
+  box.classList.remove("hidden");
+  box.innerHTML = `
+    <div class="flex justify-between border-b pb-1"><span>হিসাবকৃত মূল বেসিক:</span><b class="text-slate-800 dark:text-slate-100">${formatMoney(basic)}</b></div>
+    <div class="flex justify-between border-b pb-1"><span>প্রতি ঘণ্টা ওটি রেট:</span><b class="text-emerald-600">${formatMoney(otRate)}</b></div>
+    <div class="flex justify-between border-b pb-1"><span>ওটি বাবদ আয় (${otHrs}h):</span><b class="text-emerald-600">${formatMoney(otPay)}</b></div>
+    <div class="flex justify-between border-b pb-1"><span>উৎসব বোনাস (${bonusPct}%):</span><b class="text-amber-600">${formatMoney(eidBonus)}</b></div>
+    <div class="flex justify-between text-sm font-bold text-emerald-700 dark:text-emerald-400 pt-1"><span>সর্বমোট প্রাক্কলিত টাকা:</span><b>${formatMoney(total)}</b></div>
+  `;
+});
+
+/* Export & Import Backup JSON */
+$("btnExportJson").addEventListener("click", () => {
+  const data = {
+    profiles: getLocalProfiles(),
+    days: localStorage.getItem(`myot_local_days_${activeProfileId}`)
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `MyOTBD_Backup_${getTodayString()}.json`;
+  a.click();
+  showToast("ব্যাকআপ ফাইল ডাউনলোড হয়েছে");
+});
+
+$("btnImportJson").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (parsed.profiles) saveLocalProfiles(parsed.profiles);
+      showToast("ব্যাকআপ রিস্টোর সফল হয়েছে!");
+      location.reload();
+    } catch (err) {
+      showToast("অকার্যকর ব্যাকআপ ফাইল!");
+    }
+  };
+  reader.readAsText(file);
+});
+
+function renderAllViews() {
+  renderDashboard();
+  renderEntriesList();
+  renderPayslip();
+}
+
+// Initial Kickstart
+renderAllViews();
+</script>
+</body>
+</html>
