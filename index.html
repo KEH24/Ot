@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>হাজিরা ও OT ড্যাশবোর্ড</title>
+<style>
+:root{--bg:#eeeee8;--acc:#4b3384;--red:#d62828;--grn:#1b7f4b;--line:#cfcfc6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:"Noto Sans Bengali","Kalpurush",Arial,sans-serif;color:#1b1b1b}
+.wrap{max-width:520px;margin:0 auto;padding:12px}
+.hide{display:none!important}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+h2{margin:0 0 10px;font-size:1.1rem}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:24px;padding:10px 22px;font-weight:700}
+.btn.g{background:#fff;color:var(--acc);border:1.5px solid var(--acc)}
+.login{text-align:center;margin-top:18vh}
+.login h1{font-size:1.5rem;margin-bottom:6px}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #888;border-radius:28px;padding:12px 24px;font-weight:700;font-size:1.05rem;margin-top:18px}
+.gbtn b{color:#4285f4;font-size:1.3rem}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.head img{width:40px;height:40px;border-radius:50%}
+.head div{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+label{display:block;font-size:.85rem;color:#555;margin:8px 0 2px}
+input,select{width:100%;padding:10px;border:1.5px solid #999;border-radius:8px;font:inherit;background:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px 2px;border:1.5px solid #666;border-radius:20px;background:#fff;font-weight:700}
+.tabs button.on{background:#333;color:#fff}
+.sum div{display:flex;justify-content:space-between;padding:4px 0}
+.sum .net{border-top:3px double var(--red);margin-top:6px;padding-top:8px;font-size:1.25rem;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{background:#333;color:#fff;padding:9px 4px}
+td{text-align:center;padding:8px 4px;border-bottom:1px solid var(--line)}
+.p{color:var(--grn);font-weight:700}.a{color:var(--red);font-weight:700}
+.x{background:none;border:0;color:var(--red);font-size:1.1rem}
+.warn{background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:12px;font-size:.92rem}
+.note{font-size:.8rem;color:#555;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="setup" class="warn hide"><b>Firebase সেটআপ বাকি।</b> ফাইলের ভেতরে <code>firebaseConfig</code> অংশে আপনার Firebase প্রজেক্টের তথ্য বসান।</div>
+
+<!-- লগইন -->
+<div id="loginView" class="login hide">
+  <h1>হাজিরা ও OT ড্যাশবোর্ড</h1>
+  <div>প্রথমবার Google দিয়ে ঢুকলেই অ্যাকাউন্ট খুলে যাবে।</div>
+  <button class="gbtn" id="loginBtn"><b>G</b> Google দিয়ে লগইন</button>
+  <div id="err" class="a note"></div>
+</div>
+
+<!-- ড্যাশবোর্ড -->
+<div id="dash" class="hide">
+  <div class="head"><img id="pic" alt=""><div id="uname"></div><button class="btn g" id="logoutBtn">লগআউট</button></div>
+
+  <div class="card">
+    <label>মাস</label><input type="month" id="month">
+    <div class="sum" style="margin-top:8px" id="sum"></div>
+    <label>বোনাস / অন্যান্য (৳)</label><input type="number" id="bonus" min="0" inputmode="decimal" placeholder="0">
+  </div>
+
+  <div class="tabs">
+    <button data-t="att" class="on">হাজিরা</button><button data-t="ot">OT</button><button data-t="set">সেটিংস</button>
+  </div>
+
+  <div id="t_att" class="card">
+    <h2>হাজিরা যোগ করুন</h2>
+    <div class="two">
+      <div><label>তারিখ</label><input type="date" id="a_date"></div>
+      <div><label>অবস্থা</label><select id="a_st"><option value="present">উপস্থিত</option><option value="absent">অনুপস্থিত</option><option value="leave">ছুটি</option></select></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" id="addAtt">যোগ করুন</button><button class="btn g" id="today">আজ উপস্থিত</button></div>
+    <h2 style="margin-top:16px">হাজিরার তালিকা</h2>
+    <table><thead><tr><th>তারিখ</th><th>অবস্থা</th><th>মুছুন</th></tr></thead><tbody id="attBody"></tbody></table>
+  </div>
+
+  <div id="t_ot" class="card hide">
+    <h2>ওটি যোগ করুন</h2>
+    <div class="two">
+      <div><label>তারিখ</label><input type="date" id="o_date"></div>
+      <div><label>OT ঘণ্টা</label><input type="number" id="o_hr" min="0" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn" id="addOt">যোগ করুন</button></div>
+    <h2 style="margin-top:16px">OT তালিকা</h2>
+    <table><thead><tr><th>তারিখ</th><th>OT ঘণ্টা</th><th>মুছুন</th></tr></thead><tbody id="otBody"></tbody></table>
+  </div>
+
+  <div id="t_set" class="card hide">
+    <h2>আমার বেতনের তথ্য</h2>
+    <label>মোট বেতন (৳)</label><input type="number" id="p_gross" min="0" inputmode="decimal">
+    <label>হিসাবের নিয়ম</label><select id="p_mode"><option value="law">BLL (Bangladesh Labour Law)</option><option value="epz">EPZ</option></select>
+    <div style="margin-top:10px"><button class="btn" id="saveProf">সংরক্ষণ</button></div>
+    <div class="note">অনুপস্থিতির কর্তন = মোট বেতন ÷ ৩০ × অনুপস্থিত দিন। OT রেট = বেসিক ÷ ২০৮ × ২।</div>
+  </div>
+</div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,addDoc,deleteDoc,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ====== এখানে আপনার Firebase তথ্য বসান ====== */
+const firebaseConfig={
+  apiKey:"AIzaSyBQLCC5n_To0JkMIgk5NGS7ipkK3idb2vs",
+  authDomain:"hajeraot.firebaseapp.com",
+  projectId:"hajeraot",
+  storageBucket:"hajeraot.firebasestorage.app",
+  messagingSenderId:"991169929289",
+  appId:"1:991169929289:web:a2c3cb03eacdb922229f98"
+};
+/* ============================================ */
+
+const $=id=>document.getElementById(id);
+const FIXED={law:2450,epz:2375};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const money=x=>(Math.round(x*100)/100)+" টাকা";
+const ST={present:["উপস্থিত","p"],absent:["অনুপস্থিত","a"],leave:["ছুটি",""]};
+let user=null,prof={gross:0,mode:"law"},att=[],ots=[],unsubs=[];
+
+if(firebaseConfig.apiKey.startsWith("YOUR")){ $("setup").classList.remove("hide"); }
+else{
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+
+$("loginBtn").onclick=async()=>{
+  const p=new GoogleAuthProvider();
+  try{await signInWithPopup(auth,p)}
+  catch(e){ if(e.code==="auth/popup-blocked"||e.code==="auth/operation-not-supported-in-this-environment"){signInWithRedirect(auth,p)}else{$("err").textContent="লগইন হয়নি: "+e.code} }
+};
+$("logoutBtn").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,async u=>{
+  unsubs.forEach(f=>f());unsubs=[];user=u;
+  $("loginView").classList.toggle("hide",!!u);$("dash").classList.toggle("hide",!u);
+  if(!u)return;
+  $("uname").textContent=u.displayName||u.email;$("pic").src=u.photoURL||"";
+  const snap=await getDoc(doc(db,"users",u.uid));
+  if(snap.exists())prof={...prof,...snap.data()}; else showTab("set");
+  $("p_gross").value=prof.gross||"";$("p_mode").value=prof.mode;
+  $("a_date").value=$("o_date").value=today();$("month").value=today().slice(0,7);
+  const sub=n=>collection(db,"users",u.uid,n);
+  unsubs.push(onSnapshot(sub("att"),s=>{att=s.docs.map(d=>({id:d.id,...d.data()}));render()}));
+  unsubs.push(onSnapshot(sub("ot"),s=>{ots=s.docs.map(d=>({id:d.id,...d.data()}));render()}));
+  render();
+});
+
+$("saveProf").onclick=async()=>{
+  prof={gross:parseFloat($("p_gross").value)||0,mode:$("p_mode").value};
+  await setDoc(doc(db,"users",user.uid),{...prof,name:user.displayName||"",email:user.email||""},{merge:true});
+  render();showTab("att");
+};
+const markAtt=async(date,status)=>{ if(!date)return; await setDoc(doc(db,"users",user.uid,"att",date),{date,status}); };
+$("addAtt").onclick=()=>markAtt($("a_date").value,$("a_st").value);
+$("today").onclick=()=>markAtt(today(),"present");
+$("addOt").onclick=async()=>{
+  const date=$("o_date").value,hours=parseFloat($("o_hr").value);
+  if(!date||!(hours>0)){alert("তারিখ ও OT ঘণ্টা দিন।");return}
+  await addDoc(collection(db,"users",user.uid,"ot"),{date,hours});$("o_hr").value="";
+};
+window.delRec=async(k,id)=>{ if(confirm("মুছে ফেলবেন?")) await deleteDoc(doc(db,"users",user.uid,k,id)); };
+}
+
+function showTab(t){
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  ["att","ot","set"].forEach(x=>$("t_"+x).classList.toggle("hide",x!==t));
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+$("month").oninput=$("bonus").oninput=()=>render();
+
+function render(){
+  if(!user)return;
+  const m=$("month").value||today().slice(0,7);
+  const A=att.filter(x=>x.date.startsWith(m)).sort((x,y)=>x.date<y.date?1:-1);
+  const O=ots.filter(x=>x.date.startsWith(m)).sort((x,y)=>x.date<y.date?1:-1);
+  const present=A.filter(x=>x.status==="present").length,absent=A.filter(x=>x.status==="absent").length;
+  const hrs=O.reduce((s,x)=>s+x.hours,0),g=prof.gross||0;
+  const basic=(g-FIXED[prof.mode])/1.5,rate=g>0?basic/208*2:0;
+  const otAmt=rate*hrs,ded=g/30*absent,bonus=parseFloat($("bonus").value)||0,net=g+otAmt+bonus-ded;
+  $("sum").innerHTML=`<div><span>উপস্থিত / অনুপস্থিত</span><span>${present} / ${absent} দিন</span></div>
+   <div><span>মোট OT</span><span>${hrs} ঘণ্টা</span></div>
+   <div><span>OT রেট</span><span>${money(rate)}</span></div>
+   <div><span>OT এর টাকা</span><span>${money(otAmt)}</span></div>
+   <div><span>অনুপস্থিতির কর্তন</span><span>${money(ded)}</span></div>
+   <div class="net"><span>প্রাপ্য বেতন</span><span>${g>0?money(net):"সেটিংসে বেতন দিন"}</span></div>`;
+  const empty=c=>`<tr><td colspan="3" style="color:#777">এই মাসে কিছু নেই।</td></tr>`;
+  $("attBody").innerHTML=A.length?A.map(x=>`<tr><td>${x.date.split("-").reverse().join("-")}</td><td class="${ST[x.status][1]}">${ST[x.status][0]}</td><td><button class="x" onclick="delRec('att','${x.id}')">✕</button></td></tr>`).join(""):empty();
+  $("otBody").innerHTML=O.length?O.map(x=>`<tr><td>${x.date.split("-").reverse().join("-")}</td><td>${x.hours}</td><td><button class="x" onclick="delRec('ot','${x.id}')">✕</button></td></tr>`).join(""):empty();
+}
+</script>
+</body>
+</html>
